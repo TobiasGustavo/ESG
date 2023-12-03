@@ -143,14 +143,9 @@ class RegisterActivity : AppCompatActivity() {
     private fun setupSpinner() {
         val specialties = listOf(
             "",
-            "Cardiologia Geral",
-            "Clínica Médica Geral",
-            "Gastroenterologia Geral",
-            "Ginecologia Clínica",
-            "Pediatria Geral",
-            "Pneumologia Geral",
-            "Dermatologia Geral",
-            "Ortopedia Geral",
+            "Administrador",
+            "RH",
+            "CEO",
             "Outros"
         )
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, specialties)
@@ -169,7 +164,7 @@ class RegisterActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parentView: AdapterView<*>) {
                 Toast.makeText(
-                    baseContext, "Selecione sua especialidade médica, para concluir o cadastro.",
+                    baseContext, "Informe sua profissão, para concluir o cadastro.",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -184,14 +179,14 @@ class RegisterActivity : AppCompatActivity() {
     private fun setupListeners() {
         radioButtonCollaborator.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                hideDoctorFields()
+                hideProfessionalFields()
             }
             validateFields()
         }
 
         radioButtonAdministrator.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                showDoctorFields()
+                showProfessionalFields()
             }
             validateFields()
         }
@@ -214,24 +209,24 @@ class RegisterActivity : AppCompatActivity() {
         buttonRegister.isEnabled = false
     }
 
-    private fun showDoctorFields() {
+    private fun showProfessionalFields() {
         spinnerProfession.visibility = View.VISIBLE
         textProfession.visibility = View.VISIBLE
     }
 
-    private fun hideDoctorFields() {
+    private fun hideProfessionalFields() {
         spinnerProfession.visibility = View.GONE
         textProfession.visibility = View.GONE
     }
 
     private fun validateFields() {
         val isCollaboratorSelected = radioButtonCollaborator.isChecked
-        val isDoctorSelected = radioButtonAdministrator.isChecked
+        val isProfessionalSelected = radioButtonAdministrator.isChecked
         val isEmailValid = emailRegister.text.isNotEmpty()
         val isPasswordValid = passwordRegister.text.isNotEmpty()
         val isPasswordValidContent = passwordRegister.text.toString()
         val isSpinnerItemSelected =
-            if (isDoctorSelected) spinnerSelectProfession.selectedItemPosition != AdapterView.INVALID_POSITION else true
+            if (isProfessionalSelected) spinnerSelectProfession.selectedItemPosition != AdapterView.INVALID_POSITION else true
         val isUserName = userName.text.isNotEmpty()
         val isSurname = surname.text.isNotEmpty()
         val isFemale = radioButtonFemale.isChecked
@@ -239,7 +234,7 @@ class RegisterActivity : AppCompatActivity() {
         val isDateOfBirthDate = dateOfBirth.text.isNotEmpty()
         val isPrivacyPolicy = checkBoxPrivacyPolicy.isChecked
 
-        if (!isDoctorSelected) {
+        if (!isProfessionalSelected) {
             buttonRegister.isEnabled = isUserName &&
                     isSurname &&
                     isEmailValid &&
@@ -277,7 +272,7 @@ class RegisterActivity : AppCompatActivity() {
                     if (userId != null) {
                         val user = if (radioButtonCollaborator.isChecked) {
                             hashMapOf(
-                                "type" to "patient",
+                                "type" to "collaborator",
                                 "imageUrl" to "",
                                 "name" to userName.text.toString(),
                                 "surname" to surname.text.toString(),
@@ -288,7 +283,7 @@ class RegisterActivity : AppCompatActivity() {
                             )
                         } else {
                             hashMapOf(
-                                "type" to "doctor",
+                                "type" to "administrator",
                                 "imageUrl" to "",
                                 "name" to userName.text.toString(),
                                 "surname" to surname.text.toString(),
@@ -300,7 +295,7 @@ class RegisterActivity : AppCompatActivity() {
                             )
                         }
 
-                        //val collection = if (radioButtonCollaborator.isChecked) "patient" else "doctor"
+                        //val collection = if (radioButtonCollaborator.isChecked) "collaborator" else "administrator"
 
                         firestore.collection("users").document(userId)
                             .set(user)
