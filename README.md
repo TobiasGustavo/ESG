@@ -1,4 +1,4 @@
-# EsGame👾
+# ESG Game👾
 
 ESG e um app em kotlin gameficado para empresas e seus funcionários.
 
